@@ -1,0 +1,37 @@
+<ion-header>
+  <ion-navbar>
+    <ion-buttons start>
+      <button ion-button (click)="dismiss()">Close</button>
+    </ion-buttons>
+    <ion-title>
+      Interview Reminder
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  <ion-list>
+    <ion-item>
+      <ion-label color="primary" stacked>Company Name</ion-label>
+      <ion-input type="text" [(ngModel)]="interviewOverview.companyName" placeholder="Company Name"></ion-input>
+    </ion-item>
+
+    <ion-item >
+      <ion-label color="primary" stacked >Interviewers
+      </ion-label>
+      <ion-input type="text" *ngFor="let interviewer of interviewOverview.interviewers; let i=index;"  [(ngModel)]="interviewOverview.interviewers[i]"  placeholder="Interviewer"></ion-input>
+    </ion-item>
+    <button ion-button color="primary" full (click)="addInterviewer()"><ion-icon  name="add" ></ion-icon></button>
+    <button ion-button color="primary" full (click)="removeInterviewer()"><ion-icon  name="remove" ></ion-icon></button>
+
+    <ion-item>
+      <ion-label color="primary" stacked>Notes</ion-label>
+      <ion-textarea [(ngModel)]="interviewOverview.note" type="text"></ion-textarea>
+    </ion-item>
+
+  </ion-list>
+  <button ion-button color="danger" full (click)="dismiss()">Close Modal</button>
+</ion-content>
+
+
+

@@ -6,12 +6,14 @@ import {ViewController, NavParams} from 'ionic-angular';
 })
 export class NoteModal {
   interviewOverview: {
+    id: String,
     companyName: String,
     interviewers: Array<String>,
     note: String,
     interviewDate: String,
     interviewResponseDate: String
   } = {
+    id: "",
     companyName: "",
     interviewers: new Array(''),
     note: "",

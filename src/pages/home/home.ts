@@ -10,6 +10,7 @@ import {NoteModal} from '../note-modal/note-modal';
 })
 export class HomePage {
   interviewOverviewList: Array<{
+    id: String,
     companyName: String,
     interviewers: Array<{String}>,
     note: String,
@@ -28,7 +29,6 @@ export class HomePage {
     noteModal.onDidDismiss(data => {
       console.log(data);
       if(data.companyName && data.companyName!=='') {
-        this.interviewOverviewList.push(data);
 
         if(!this.isWebApp() ) {
           let query = "insert into interview(company_name, interviewer, note, interview_date, interview_response_date) values (?, ?, ?, ?, ?);";
@@ -41,7 +41,13 @@ export class HomePage {
             .then((db:SQLiteObject) => {
               //noinspection TypeScriptUnresolvedFunction
               db.executeSql(query, [data.companyName, data.interviewers.join(","), data.note, data.interviewDate, data.interviewResponseDate])
-                .then(() => console.log('Executed SQL'))
+                .then(result => {
+                  console.log('Executed SQL');
+
+                  data.id = result.insertId;
+                  this.interviewOverviewList.push(data);
+
+                })
                 .catch(e => console.log(e));
 
             })
@@ -76,6 +82,7 @@ export class HomePage {
             console.log(result);
             for(var i = 0; i<result.rows.length; i++){
               this.interviewOverviewList.push({
+                id: result.rows.item(i).id,
                 companyName: result.rows.item(i).company_name,
                 interviewers: result.rows.item(i).interviewer.split(","),
                 note: result.rows.item(i).note,
@@ -94,6 +101,27 @@ export class HomePage {
     noteModal.onDidDismiss(data => {
       console.log(data);
       interviewOverview = data;
+
+      if(data.companyName && data.companyName!=='') {
+        if(!this.isWebApp() ) {
+          let query = "update interview set company_name = ? , interviewer = ? , note = ? , interview_date = ? , interview_response_date = ? where id = ? ;";
+
+          //noinspection TypeScriptUnresolvedFunction
+          this.sqlite.create({
+            name: 'interviewReminder',
+            location: 'default'
+          })
+            .then((db:SQLiteObject) => {
+              //noinspection TypeScriptUnresolvedFunction
+              db.executeSql(query, [data.companyName, data.interviewers.join(","), data.note, data.interviewDate, data.interviewResponseDate, data.id])
+                .then(() => console.log('Executed SQL'))
+                .catch(e => console.log(e));
+
+            })
+            .catch(e => console.log(e));
+        }
+
+      }
     });
     noteModal.present();
   }

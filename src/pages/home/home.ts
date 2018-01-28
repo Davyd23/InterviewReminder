@@ -12,7 +12,9 @@ export class HomePage {
   interviewOverviewList: Array<{
     companyName: String,
     interviewers: Array<{String}>,
-    note: String
+    note: String,
+    interviewDate: String,
+    interviewResponseDate: String
   }> = new Array();
 
   constructor(public modalCtrl:ModalController, private sqlite: SQLite) {
@@ -29,7 +31,7 @@ export class HomePage {
         this.interviewOverviewList.push(data);
 
         if(!this.isWebApp() ) {
-          let query = "insert into interview(company_name, interviewer, note) values (?, ?, ?);";
+          let query = "insert into interview(company_name, interviewer, note, interview_date, interview_response_date) values (?, ?, ?, ?, ?);";
 
           //noinspection TypeScriptUnresolvedFunction
           this.sqlite.create({
@@ -38,7 +40,7 @@ export class HomePage {
           })
             .then((db:SQLiteObject) => {
               //noinspection TypeScriptUnresolvedFunction
-              db.executeSql(query, [data.companyName, data.interviewers.join(","), data.note])
+              db.executeSql(query, [data.companyName, data.interviewers.join(","), data.note, data.interviewDate, data.interviewResponseDate])
                 .then(() => console.log('Executed SQL'))
                 .catch(e => console.log(e));
 
@@ -62,6 +64,8 @@ export class HomePage {
         db.executeSql('create table IF NOT EXISTS interview(id INTEGER PRIMARY KEY AUTOINCREMENT,' +
           'company_name VARCHAR(255),' +
           'interviewer VARCHAR(255),' +
+          'interview_date VARCHAR(10),' +
+          'interview_response_date VARCHAR(10),' +
           'note VARCHAR(1000))', {})
           .then(() => console.log('Executed SQL'))
           .catch(e => console.log(e));
@@ -74,7 +78,9 @@ export class HomePage {
               this.interviewOverviewList.push({
                 companyName: result.rows.item(i).company_name,
                 interviewers: result.rows.item(i).interviewer.split(","),
-                note: result.rows.item(i).note
+                note: result.rows.item(i).note,
+                interviewDate: result.rows.item(i).interview_date,
+                interviewResponseDate: result.rows.item(i).interview_response_date
               });
             }
           })

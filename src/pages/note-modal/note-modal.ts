@@ -8,11 +8,15 @@ export class NoteModal {
   interviewOverview: {
     companyName: String,
     interviewers: Array<String>,
-    note: String
+    note: String,
+    interviewDate: String,
+    interviewResponseDate: String
   } = {
     companyName: "",
     interviewers: new Array(''),
-    note: ""
+    note: "",
+    interviewDate: new Date().toISOString().slice(0, 10),
+    interviewResponseDate: new Date().toISOString().slice(0, 10)
   } ;
   constructor( public viewCtrl:ViewController, public params: NavParams) {
     if(params.get("interviewOverview") ){
